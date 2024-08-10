@@ -1,14 +1,31 @@
 import { Response } from "express";
+import { createLogger, format, transports } from "winston";
 
 const printRed = (text: string) => {
   console.log("\x1b[31m%s\x1b[0", `${text} \n`);
 };
+
+const logger = createLogger({
+  transports: [
+    new transports.File({
+      filename: "./logs/index.log",
+      level: "error",
+      format: format.combine(
+        format.timestamp({ format: "YYY-MM-DD HH:mm:ss" }),
+        format.printf(
+          (info) => `${info.timestamp} ${info.level} : ${info.message}`
+        )
+      ),
+    }),
+  ],
+});
 
 const handleError = (
   res: Response,
   message: string,
   statusCode: number = 400
 ) => {
+  logger.log({ level: "error", message });
   return res.status(statusCode).json({ status: false, message });
 };
 const handleSuccess = (
