@@ -47,7 +47,18 @@ const generateCode = (num: number = 15) => {
   return result.toUpperCase();
 };
 
+const isEmpty = (data: any) => {
+  return (
+    !data ||
+    data.length === 0 ||
+    typeof data == "undefined" ||
+    data == null ||
+    Object.keys(data).length == 0
+  );
+};
+
 const Utility = {
+  isEmpty,
   printRed,
   handleError,
   handleSuccess,

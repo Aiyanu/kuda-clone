@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 import JWT from "jsonwebtoken";
-import UserService from "../services/user.services";
+import UserService from "../services/user.service";
 import {
   AccountStatus,
   EmailStatus,
