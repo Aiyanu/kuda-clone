@@ -57,12 +57,17 @@ const isEmpty = (data: any) => {
   );
 };
 
+const escapesHtml = (html: string) => {
+  return html.replace(/[&<>"']/g, "");
+};
+
 const Utility = {
   isEmpty,
   printRed,
   handleError,
   handleSuccess,
   generateCode,
+  escapesHtml,
 };
 
 export default Utility;

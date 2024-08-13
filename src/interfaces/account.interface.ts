@@ -1,4 +1,4 @@
-import { Optional, Model } from "sequelize";
+import { Optional, Model, FindOptions } from "sequelize";
 
 export interface IAccount {
   id: string;
@@ -33,4 +33,5 @@ export interface IAccountDataSource {
     searchBy: IFindAccountQuery,
     data: Partial<IAccount>
   ): Promise<void>;
+  fetchAll(query: FindOptions<IAccount>): Promise<IAccount[]>;
 }

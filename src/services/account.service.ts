@@ -5,6 +5,7 @@ import {
   IAccountDataSource,
 } from "../interfaces/account.interface";
 import { AccountStatus } from "../interfaces/enum/account.enum";
+import { IUser } from "../interfaces/user.interface";
 
 class AccountService {
   private accountDataSource: IAccountDataSource;
@@ -46,6 +47,20 @@ class AccountService {
       status: AccountStatus.ACTIVE,
     } as IAccountCreationBody;
     return this.accountDataSource.create(record);
+  }
+  async getAccountByUserId(userId: string) {
+    const query = {
+      where: { userId },
+      raw: true,
+    };
+    return this.accountDataSource.fetchAll(query);
+  }
+  async getAccountByField(record: Partial<IUser>) {
+    const query = {
+      where: { ...record },
+      raw: true,
+    } as IFindAccountQuery;
+    return this.accountDataSource.fetchOne(query);
   }
 }
 

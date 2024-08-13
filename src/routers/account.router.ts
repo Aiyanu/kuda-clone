@@ -12,13 +12,19 @@ const accountService = new AccountService(new AccountDataSource());
 const accountController = new AccountController(accountService);
 const createAccountRoute = () => {
   router.post(
-    "/create",
+    "/create-account",
     validator(ValidationSchema.createAccountSchema),
     Auth(),
     (req: Request, res: Response) => {
       return accountController.createAccount(req, res);
     }
   );
+  router.get("/account-list", Auth(), (req: Request, res: Response) => {
+    return accountController.getAllUserAccount(req, res);
+  });
+  router.get("/:id", Auth(), (req: Request, res: Response) => {
+    return accountController.getUserAccount(req, res);
+  });
   return router;
 };
 

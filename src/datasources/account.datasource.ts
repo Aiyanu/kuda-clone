@@ -1,3 +1,4 @@
+import { FindOptions } from "sequelize";
 import {
   IFindAccountQuery,
   IAccount,
@@ -20,6 +21,10 @@ class AccountDataSource implements IAccountDataSource {
     data: Partial<IAccount>
   ): Promise<void> {
     await AccountModel.update(data, searchBy);
+  }
+
+  async fetchAll(query: FindOptions<IAccount>): Promise<IAccount[]> {
+    return await AccountModel.findAll(query);
   }
 }
 

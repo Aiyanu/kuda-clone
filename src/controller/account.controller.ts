@@ -38,6 +38,59 @@ class AccountController {
       );
     }
   }
+  async getAllUserAccount(req: Request, res: Response) {
+    try {
+      const params = { ...req.body };
+
+      let account = await this.accountService.getAccountByUserId(
+        params.user.id
+      );
+      return Utility.handleSuccess(
+        res,
+        "Account Fetched Successfully",
+        {
+          account,
+        },
+        ResponseCode.SUCCESS
+      );
+    } catch (error) {
+      return Utility.handleError(
+        res,
+        (error as TypeError).message,
+        ResponseCode.SERVER_ERROR
+      );
+    }
+  }
+  async getUserAccount(req: Request, res: Response) {
+    try {
+      const params = { ...req.params };
+
+      let account = await this.accountService.getAccountByField({
+        id: Utility.escapesHtml(params.id),
+      });
+      if (!account) {
+        return Utility.handleError(
+          res,
+          "Account does not exist",
+          ResponseCode.NOT_FOUND
+        );
+      }
+      return Utility.handleSuccess(
+        res,
+        "Account Fetched Successfully",
+        {
+          account,
+        },
+        ResponseCode.SUCCESS
+      );
+    } catch (error) {
+      return Utility.handleError(
+        res,
+        (error as TypeError).message,
+        ResponseCode.SERVER_ERROR
+      );
+    }
+  }
 }
 
 export default AccountController;
