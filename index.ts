@@ -5,6 +5,7 @@ import cors from "cors";
 import DBInitialize from "./src/database/init";
 import UserRoute from "./src/routers/user.router";
 import AccountRoute from "./src/routers/account.router";
+import TransactionRoute from "./src/routers/transaction.router";
 
 //create an app
 const app = express();
@@ -30,6 +31,7 @@ app.use((err: TypeError, req: Request, res: Response, next: NextFunction) => {
 
 app.use("/api/user", UserRoute);
 app.use("/api/account", AccountRoute);
+app.use("/api/transaction", TransactionRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send(`Welcome to ${process.env.APPNAME}`);

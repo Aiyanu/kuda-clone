@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { Schema } from "yup";
 import Utility from "../utils/index.utils";
-import { ResponseCode } from "../interfaces/enum/code.emum";
+import { ResponseCode } from "../interfaces/enum/code.enum";
 import JWT from "jsonwebtoken";
 import { IUser } from "../interfaces/user.interface";
 import { userService } from "../routers/user.router";

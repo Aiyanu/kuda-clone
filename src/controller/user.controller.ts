@@ -9,7 +9,7 @@ import {
 } from "../interfaces/enum/user.enum";
 import { IUserCreationBody } from "../interfaces/user.interface";
 import Utility from "../utils/index.utils";
-import { ResponseCode } from "../interfaces/enum/code.emum";
+import { ResponseCode } from "../interfaces/enum/code.enum";
 import TokenService from "../services/token.services";
 import { IToken } from "../interfaces/token.interface";
 import EmailService from "../services/email.service";

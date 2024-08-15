@@ -1,4 +1,4 @@
-import { ResponseCode } from "./../interfaces/enum/code.emum";
+import { ResponseCode } from "../interfaces/enum/code.enum";
 import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 import JWT from "jsonwebtoken";

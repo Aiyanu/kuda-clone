@@ -1,3 +1,4 @@
+import sequelize from "../database";
 import {
   IFindAccountQuery,
   IAccount,
@@ -61,6 +62,18 @@ class AccountService {
       raw: true,
     } as IFindAccountQuery;
     return this.accountDataSource.fetchOne(query);
+  }
+
+  async topUpBalance(
+    accountId: string,
+    amount: number,
+    options: Partial<IFindAccountQuery> = {}
+  ) {
+    const filter = { where: { id: accountId }, ...options };
+    const update = {
+      balance: sequelize.literal(`balance+${amount}`),
+    };
+    return await this.accountDataSource.updateOne(filter, update as any);
   }
 }
 

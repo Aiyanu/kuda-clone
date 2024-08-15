@@ -61,6 +61,20 @@ const escapesHtml = (html: string) => {
   return html.replace(/[&<>"']/g, "");
 };
 
+const parseToObject = (value: string): any => {
+  let counter = 0;
+  let data = JSON.parse(value);
+  while (counter <= 2) {
+    if (typeof data == "object") {
+      break;
+    } else {
+      data = JSON.parse(data);
+      counter++;
+    }
+  }
+  return data;
+};
+
 const Utility = {
   isEmpty,
   printRed,
@@ -68,6 +82,7 @@ const Utility = {
   handleSuccess,
   generateCode,
   escapesHtml,
+  parseToObject,
 };
 
 export default Utility;
