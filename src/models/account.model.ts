@@ -17,7 +17,7 @@ const AccountModel = Db.define<IAccountModel>(
       allowNull: false,
     },
     accountNumber: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: false,
       unique: true,
     },

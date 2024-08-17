@@ -1,19 +1,8 @@
-24Y-08-10 23:26:05 error : Token has expired
-24Y-08-13 10:56:45 error : Authorization Failed
-24Y-08-13 10:59:49 error : invalid signature
-24Y-08-13 10:59:50 error : invalid signature
-24Y-08-13 11:04:25 error : Authorization Failed
-24Y-08-15 14:34:45 error : Authorization Failed
-24Y-08-15 14:35:02 error : Paystack payment not available, try again in a few seconds
-24Y-08-15 14:40:29 error : Paystack payment not available, try again in a few seconds
-24Y-08-15 14:43:37 error : notNull Violation: TransactionModel.detail cannot be null
-24Y-08-15 14:44:08 error : Field 'detail' doesn't have a default value
-24Y-08-15 14:49:56 error : Email transaction reference
-24Y-08-15 14:50:35 error : Email transaction reference
-24Y-08-15 14:54:21 error : Paystack payment not available, try again in a few seconds
-24Y-08-15 22:28:46 error : jwt malformed
-24Y-08-15 22:31:54 error : Authorization Failed
-24Y-08-15 22:38:44 error : Paystack payment not available, try again in a few seconds
-24Y-08-15 22:42:51 error : Email transaction reference
-24Y-08-15 22:45:17 error : Email transaction reference
-24Y-08-15 22:46:41 error : Paystack payment not available, try again in a few seconds
+24Y-08-17 01:30:37 error : WHERE parameter "accountNumber" has invalid "undefined" value
+24Y-08-17 01:32:36 error : WHERE parameter "accountNumber" has invalid "undefined" value
+24Y-08-17 01:33:28 error : WHERE parameter "accountNumber" has invalid "undefined" value
+24Y-08-17 01:33:57 error : receiverAccountId is a required field
+24Y-08-17 01:35:01 error : Internal Transfer Failed
+24Y-08-17 01:36:11 error : Internal Transfer Failed
+24Y-08-17 01:37:07 error : Internal Transfer Failed
+24Y-08-17 01:37:41 error : Internal Transfer Failed

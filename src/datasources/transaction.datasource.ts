@@ -8,8 +8,14 @@ import {
 import TransactionModel from "../models/transaction.model";
 
 class AccountDataSource implements ITransactionDataSource {
-  async create(record: ITransactionCreationBody): Promise<ITransaction> {
-    return await TransactionModel.create(record);
+  async create(
+    record: ITransactionCreationBody,
+    options?: Partial<IFindTransactionQuery>
+  ): Promise<ITransaction> {
+    return await TransactionModel.create(record, {
+      returning: true,
+      ...options,
+    });
   }
 
   async fetchOne(query: IFindTransactionQuery): Promise<ITransaction | null> {

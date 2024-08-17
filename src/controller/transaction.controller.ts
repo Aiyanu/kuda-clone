@@ -6,6 +6,8 @@ import TransactionService from "../services/transaction.service";
 import { TransactionStatus } from "../interfaces/enum/transaction.enum";
 import sequelize from "../database";
 import AccountService from "../services/account.service";
+import { IAccount } from "../interfaces/account.interface";
+import { ITransaction } from "../interfaces/transaction.interface";
 
 class TransactionController {
   private transactionService: TransactionService;
@@ -39,6 +41,43 @@ class TransactionController {
     } catch (error) {
       await tx.rollback();
       return false;
+    }
+  }
+  private async transfer(
+    senderAccount: IAccount,
+    receiverAccount: IAccount,
+    amount: number
+  ): Promise<{ status: boolean; transaction: ITransaction | null }> {
+    const tx = await sequelize.transaction();
+    try {
+      await this.accountService.topUpBalance(senderAccount.id, -amount, {
+        transaction: tx,
+      });
+      await this.accountService.topUpBalance(receiverAccount.id, amount, {
+        transaction: tx,
+      });
+
+      const newTransaction = {
+        userId: senderAccount.userId,
+        accountId: senderAccount.id,
+        amount,
+        detail: {
+          receiverAccountNumber: receiverAccount.accountNumber,
+        },
+      };
+
+      console.log(newTransaction);
+
+      let transfer = await this.transactionService.processInternalTransfer(
+        newTransaction,
+        { transaction: tx }
+      );
+
+      await tx.commit();
+      return { status: true, transaction: transfer };
+    } catch (error) {
+      await tx.rollback();
+      return { status: false, transaction: null };
     }
   }
 
@@ -127,8 +166,79 @@ class TransactionController {
       }
 
       return Utility.handleSuccess(res, "Deposit successfully", {
-        transaction,
+        transaction: deposit,
       });
+    } catch (error) {
+      return Utility.handleError(
+        res,
+        (error as TypeError).message,
+        ResponseCode.SERVER_ERROR
+      );
+    }
+  }
+  async internalTransfer(req: Request, res: Response) {
+    try {
+      const params = { ...req.body };
+      const senderAccount = await this.accountService.getAccountByField({
+        id: params.senderAccountId,
+      });
+
+      if (!senderAccount) {
+        return Utility.handleError(
+          res,
+          "Invalid sender account",
+          ResponseCode.NOT_FOUND
+        );
+      }
+      if (senderAccount.balance <= params.amount) {
+        return Utility.handleError(
+          res,
+          "insufficient balance",
+          ResponseCode.BAD_REQUEST
+        );
+      }
+
+      const receiverAccount = await this.accountService.getAccountByField({
+        accountNumber: params.receiverAccountNumber,
+      });
+
+      if (!receiverAccount) {
+        return Utility.handleError(
+          res,
+          "invalid receiver account",
+          ResponseCode.NOT_FOUND
+        );
+      }
+
+      if (senderAccount.userId == receiverAccount.userId) {
+        return Utility.handleError(
+          res,
+          "You cannot transfer to your own account",
+          ResponseCode.BAD_REQUEST
+        );
+      }
+
+      const result = await this.transfer(
+        senderAccount,
+        receiverAccount,
+        params.amount
+      );
+
+      console.log(result);
+
+      if (!result.status) {
+        return Utility.handleError(
+          res,
+          "Internal Transfer Failed",
+          ResponseCode.BAD_REQUEST
+        );
+      }
+      return Utility.handleSuccess(
+        res,
+        "Transfer was completed successfully",
+        { transfer: result.transaction },
+        ResponseCode.SUCCESS
+      );
     } catch (error) {
       return Utility.handleError(
         res,

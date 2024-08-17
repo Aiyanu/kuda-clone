@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import {
   TransactionGateway,
   TransactionStatus,
@@ -39,6 +40,10 @@ class TransactionService {
     } as ITransactionCreationBody;
     return this.transactionDataSource.create(deposit);
   }
+
+  private generatePaymentReference(): string {
+    return uuidv4();
+  }
   async setStatus(
     transactionId: string,
     status: string,
@@ -49,6 +54,22 @@ class TransactionService {
       status,
     };
     await this.transactionDataSource.updateOne(update as any, filter);
+  }
+  async processInternalTransfer(
+    data: Partial<ITransaction>,
+    options: Partial<IFindTransactionQuery> = {}
+  ): Promise<ITransaction> {
+    const record = {
+      ...data,
+      type: TransactionTypes.TRANSFER,
+      reference: this.generatePaymentReference(),
+      detail: {
+        ...data.detail,
+        gateway: TransactionGateway.PAYSTACK,
+      },
+      status: TransactionStatus.IN_PROGRESS,
+    } as ITransactionCreationBody;
+    return this.transactionDataSource.create(record);
   }
 }
 

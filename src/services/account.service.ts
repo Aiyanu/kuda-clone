@@ -56,7 +56,7 @@ class AccountService {
     };
     return this.accountDataSource.fetchAll(query);
   }
-  async getAccountByField(record: Partial<IUser>) {
+  async getAccountByField(record: Partial<IAccount>) {
     const query = {
       where: { ...record },
       raw: true,
