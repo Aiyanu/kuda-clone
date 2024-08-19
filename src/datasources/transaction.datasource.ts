@@ -7,7 +7,7 @@ import {
 } from "../interfaces/transaction.interface";
 import TransactionModel from "../models/transaction.model";
 
-class AccountDataSource implements ITransactionDataSource {
+class TransactionDataSource implements ITransactionDataSource {
   async create(
     record: ITransactionCreationBody,
     options?: Partial<IFindTransactionQuery>
@@ -34,4 +34,4 @@ class AccountDataSource implements ITransactionDataSource {
   }
 }
 
-export default AccountDataSource;
+export default TransactionDataSource;

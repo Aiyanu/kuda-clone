@@ -66,7 +66,7 @@ class AccountController {
       const params = { ...req.params };
 
       let account = await this.accountService.getAccountByField({
-        id: Utility.escapesHtml(params.id),
+        id: Utility.escapeHtml(params.id),
       });
       if (!account) {
         return Utility.handleError(

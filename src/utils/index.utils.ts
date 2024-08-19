@@ -1,8 +1,9 @@
 import { Response } from "express";
-import { createLogger, format, transports } from "winston";
+import { createLogger, format, info, transport, transports } from "winston";
+import { BANKS } from "../interfaces/enum/payee.enum";
 
 const printRed = (text: string) => {
-  console.log("\x1b[31m%s\x1b[0", `${text} \n`);
+  console.log("\x1b[31m%s\x1b[0m", `${text} \n`);
 };
 
 const logger = createLogger({
@@ -11,14 +12,28 @@ const logger = createLogger({
       filename: "./logs/index.log",
       level: "error",
       format: format.combine(
-        format.timestamp({ format: "YYY-MM-DD HH:mm:ss" }),
+        format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
         format.printf(
-          (info) => `${info.timestamp} ${info.level} : ${info.message}`
+          (info) => `${info.timestamp} ${info.level} : ${info.message} `
         )
       ),
     }),
   ],
 });
+
+const escapeHtml = (html: string) => {
+  return html.replace(/[&<>"']/g, "");
+};
+
+const isEmpty = (data: any) => {
+  return (
+    !data ||
+    data.length === 0 ||
+    typeof data == "undefined" ||
+    data == null ||
+    Object.keys(data).length == 0
+  );
+};
 
 const handleError = (
   res: Response,
@@ -28,10 +43,11 @@ const handleError = (
   logger.log({ level: "error", message });
   return res.status(statusCode).json({ status: false, message });
 };
+
 const handleSuccess = (
   res: Response,
   message: string,
-  data: {},
+  data = {},
   statusCode: number = 200
 ) => {
   return res
@@ -45,20 +61,6 @@ const generateCode = (num: number = 15) => {
   let result = randomness + dateString;
   result = result.length > num ? result.substring(0, num) : result;
   return result.toUpperCase();
-};
-
-const isEmpty = (data: any) => {
-  return (
-    !data ||
-    data.length === 0 ||
-    typeof data == "undefined" ||
-    data == null ||
-    Object.keys(data).length == 0
-  );
-};
-
-const escapesHtml = (html: string) => {
-  return html.replace(/[&<>"']/g, "");
 };
 
 const parseToObject = (value: string): any => {
@@ -75,14 +77,23 @@ const parseToObject = (value: string): any => {
   return data;
 };
 
+const getBankName = (bankCode: string): string => {
+  const filter = BANKS.filter((item) => item.code == bankCode);
+  if (filter.length > 0) {
+    return filter[0].name;
+  }
+  return "";
+};
+
 const Utility = {
-  isEmpty,
   printRed,
   handleError,
   handleSuccess,
   generateCode,
-  escapesHtml,
+  isEmpty,
+  escapeHtml,
   parseToObject,
+  getBankName,
 };
 
 export default Utility;

@@ -67,6 +67,20 @@ class TransactionService {
         ...data.detail,
         gateway: TransactionGateway.PAYSTACK,
       },
+      status: TransactionStatus.COMPLETED,
+    } as ITransactionCreationBody;
+    return this.transactionDataSource.create(record);
+  }
+  async processExternalTransfer(
+    data: Partial<ITransaction>,
+    options: Partial<IFindTransactionQuery> = {}
+  ): Promise<ITransaction> {
+    const record = {
+      ...data,
+      type: TransactionTypes.TRANSFER,
+      detail: {
+        gateway: TransactionGateway.PAYSTACK,
+      },
       status: TransactionStatus.IN_PROGRESS,
     } as ITransactionCreationBody;
     return this.transactionDataSource.create(record);

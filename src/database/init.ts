@@ -3,6 +3,7 @@ import UserModel from "../models/user.model";
 import TokenModel from "../models/token.model";
 import AccountModel from "../models/account.model";
 import TransactionModel from "../models/transaction.model";
+import PayeeModel from "../models/payee.model";
 
 const DBInitialize = async () => {
   try {
@@ -11,6 +12,7 @@ const DBInitialize = async () => {
     TokenModel.sync({ alter: false });
     AccountModel.sync({ alter: false });
     TransactionModel.sync({ alter: false });
+    PayeeModel.sync({ alter: false });
   } catch (err) {
     console.log(err);
   }
