@@ -14,4 +14,6 @@ export const AccountStatus = {
   ACTIVE: "ACTIVE",
   INACTIVE: "INACTIVE",
   SUSPENDED: "SUSPENDED",
+  FROZEN: "FROZEN",
+  DELETED: "DELETED",
 };

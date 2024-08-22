@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import { AccountStatus } from "../interfaces/enum/user.enum";
 
 const registerSchema = yup.object({
   firstname: yup.string().lowercase().trim().required(),
@@ -20,11 +21,17 @@ const resetPasswordSchema = yup.object({
   password: yup.string().min(6).trim().required(),
 });
 
+const setAccountStatusSchema = yup.object({
+  userId: yup.string().trim().required(),
+  status: yup.string().required().oneOf(Object.values(AccountStatus)),
+});
+
 const ValidationSchema = {
   registerSchema,
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  setAccountStatusSchema,
 };
 
 export default ValidationSchema;

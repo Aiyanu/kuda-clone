@@ -12,7 +12,10 @@ import AccountService from "../services/account.service";
 import { IAccount } from "../interfaces/account.interface";
 import { ITransaction } from "../interfaces/transaction.interface";
 import PayeeService from "../services/payee.service";
+import { autoInjectable } from "tsyringe";
+import Permissions from "../permissions";
 
+@autoInjectable()
 class TransactionController {
   private transactionService: TransactionService;
   private accountService: AccountService;
@@ -390,6 +393,131 @@ class TransactionController {
         res,
         "Transfer was initialized successfully",
         { transfer: result.transaction },
+        ResponseCode.SUCCESS
+      );
+    } catch (error) {
+      return Utility.handleError(
+        res,
+        (error as TypeError).message,
+        ResponseCode.SERVER_ERROR
+      );
+    }
+  }
+  async getAllUserTransaction(req: Request, res: Response) {
+    try {
+      const params = { ...req.body };
+      let filter = {} as ITransaction;
+      filter.userId = params.user.id;
+
+      if (params.accountId) {
+        filter.accountId = params.accountId;
+      }
+      let transactions = await this.transactionService.getTransactionsByField(
+        filter
+      );
+      return Utility.handleSuccess(
+        res,
+        "Treansactions Fetched Successfully",
+        {
+          transactions,
+        },
+        ResponseCode.SUCCESS
+      );
+    } catch (error) {
+      return Utility.handleError(
+        res,
+        (error as TypeError).message,
+        ResponseCode.SERVER_ERROR
+      );
+    }
+  }
+  async getUserTransaction(req: Request, res: Response) {
+    try {
+      const params = { ...req.params };
+
+      let transaction = await this.transactionService.getTransactionByField({
+        id: Utility.escapeHtml(params.id),
+      });
+      if (!transaction) {
+        return Utility.handleError(
+          res,
+          "Transaction does not exist",
+          ResponseCode.NOT_FOUND
+        );
+      }
+      return Utility.handleSuccess(
+        res,
+        "Transaction Fetched Successfully",
+        {
+          transaction,
+        },
+        ResponseCode.SUCCESS
+      );
+    } catch (error) {
+      return Utility.handleError(
+        res,
+        (error as TypeError).message,
+        ResponseCode.SERVER_ERROR
+      );
+    }
+  }
+  async getAllTransactionsByAdmin(req: Request, res: Response) {
+    try {
+      const admin = { ...req.body.user };
+      const permission = Permissions.can(admin.role).readAny("transactions");
+      if (!permission.granted) {
+        return Utility.handleError(
+          res,
+          "Invalid Permission",
+          ResponseCode.NOT_FOUND
+        );
+      }
+
+      let transactions = await this.transactionService.getTransactions();
+
+      return Utility.handleSuccess(
+        res,
+        "Transactions Fetched successfully",
+        { transactions },
+        ResponseCode.SUCCESS
+      );
+    } catch (error) {
+      return Utility.handleError(
+        res,
+        (error as TypeError).message,
+        ResponseCode.SERVER_ERROR
+      );
+    }
+  }
+  async getSingleTransactionId(req: Request, res: Response) {
+    try {
+      const params = { ...req.params };
+      const admin = { ...req.body.user };
+
+      const permission = Permissions.can(admin.role).readAny("transactions");
+      if (!permission.granted) {
+        return Utility.handleError(
+          res,
+          "Invalid Permission",
+          ResponseCode.NOT_FOUND
+        );
+      }
+
+      let transaction = await this.transactionService.getTransactionByField({
+        id: Utility.escapeHtml(params.id),
+      });
+
+      if (!transaction) {
+        return Utility.handleError(
+          res,
+          "Transaction does not exist",
+          ResponseCode.NOT_FOUND
+        );
+      }
+      return Utility.handleSuccess(
+        res,
+        "Transaction Fetched successfully",
+        { transaction },
         ResponseCode.SUCCESS
       );
     } catch (error) {

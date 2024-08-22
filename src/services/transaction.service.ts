@@ -10,11 +10,14 @@ import {
   ITransactionCreationBody,
   ITransactionDataSource,
 } from "../interfaces/transaction.interface";
+import TransactionDataSource from "../datasources/transaction.datasource";
+import { autoInjectable } from "tsyringe";
 
+@autoInjectable()
 class TransactionService {
-  private transactionDataSource: ITransactionDataSource;
+  private transactionDataSource: TransactionDataSource;
 
-  constructor(_transactionDataSource: ITransactionDataSource) {
+  constructor(_transactionDataSource: TransactionDataSource) {
     this.transactionDataSource = _transactionDataSource;
   }
 
@@ -84,6 +87,24 @@ class TransactionService {
       status: TransactionStatus.IN_PROGRESS,
     } as ITransactionCreationBody;
     return this.transactionDataSource.create(record);
+  }
+
+  async getTransactions(): Promise<ITransaction[]> {
+    const query = { where: {}, raw: true };
+    return this.transactionDataSource.fetchAll(query);
+  }
+
+  async getTransactionsByField(
+    record: Partial<ITransaction>
+  ): Promise<ITransaction[]> {
+    const query = { where: { ...record }, raw: true } as IFindTransactionQuery;
+    return this.transactionDataSource.fetchAll(query);
+  }
+  async getTransactionByField(
+    record: Partial<ITransaction>
+  ): Promise<ITransaction | null> {
+    const query = { where: { ...record }, raw: true } as IFindTransactionQuery;
+    return this.transactionDataSource.fetchOne(query);
   }
 }
 

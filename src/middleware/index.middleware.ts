@@ -4,7 +4,11 @@ import Utility from "../utils/index.utils";
 import { ResponseCode } from "../interfaces/enum/code.enum";
 import JWT from "jsonwebtoken";
 import { IUser } from "../interfaces/user.interface";
-import { userService } from "../routers/user.router";
+import UserService from "../services/user.service";
+import { container } from "tsyringe";
+import { AccountStatus, UserRoles } from "../interfaces/enum/user.enum";
+
+const userService = container.resolve(UserService);
 
 export const validator = (schema: Schema<any>) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -35,10 +39,50 @@ export const Auth = () => {
         if (!user) {
           throw new TypeError("Authorization Failed");
         }
-        if (user.accountStatus == "DELETED") {
-          throw new TypeError("Authorization failed");
+        if (user.accountStatus == AccountStatus.DELETED) {
+          throw new TypeError("Account does not exist");
+        }
+        if (user.accountStatus == AccountStatus.FROZEN) {
+          throw new TypeError("Account frozen");
+        }
+        if (user.accountStatus == AccountStatus.SUSPENDED) {
+          throw new TypeError("Account suspended");
         }
 
+        req.body.user = decoded;
+        next();
+      } else {
+        throw new TypeError("Authorization Failed");
+      }
+    } catch (error) {
+      return Utility.handleError(
+        res,
+        (error as TypeError).message,
+        ResponseCode.BAD_REQUEST
+      );
+    }
+  };
+};
+export const AdminAuth = () => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let token: string = req.headers.authorization ?? "";
+      if (Utility.isEmpty(token)) {
+        throw new TypeError("Authorization Failed");
+      }
+      token = token.split(" ")[1];
+      const decoded = JWT.verify(token, process.env.JWT_KEY as string) as IUser;
+      if (decoded && decoded.id) {
+        const user = await userService.getUserByField({ id: decoded.id });
+        if (!user) {
+          throw new TypeError("Authorization Failed");
+        }
+        if (user.role !== UserRoles.ADMIN) {
+          throw new TypeError("Authorization Failed");
+        }
+        if (user.accountStatus == AccountStatus.DELETED) {
+          throw new TypeError("Authorization failed");
+        }
         req.body.user = decoded;
         next();
       } else {

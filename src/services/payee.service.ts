@@ -5,11 +5,14 @@ import {
   IPayeeCreationBody,
   IPayeeDataSource,
 } from "../interfaces/payee.interface";
+import { autoInjectable } from "tsyringe";
+import PayeeDataSource from "../datasources/payee.datasource";
 
+@autoInjectable()
 class PayeeService {
-  private payeeDataSource: IPayeeDataSource;
+  private payeeDataSource: PayeeDataSource;
 
-  constructor(_payeeDataSource: IPayeeDataSource) {
+  constructor(_payeeDataSource: PayeeDataSource) {
     this.payeeDataSource = _payeeDataSource;
   }
 

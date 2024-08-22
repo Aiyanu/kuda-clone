@@ -1,3 +1,4 @@
+import { autoInjectable } from "tsyringe";
 import sequelize from "../database";
 import {
   IFindAccountQuery,
@@ -7,11 +8,13 @@ import {
 } from "../interfaces/account.interface";
 import { AccountStatus } from "../interfaces/enum/account.enum";
 import { IUser } from "../interfaces/user.interface";
+import AccountDataSource from "../datasources/account.datasource";
 
+@autoInjectable()
 class AccountService {
-  private accountDataSource: IAccountDataSource;
+  private accountDataSource: AccountDataSource;
 
-  constructor(_accountDataSource: IAccountDataSource) {
+  constructor(_accountDataSource: AccountDataSource) {
     this.accountDataSource = _accountDataSource;
   }
 
@@ -37,6 +40,11 @@ class AccountService {
       }
     }
     return accountNo;
+  }
+
+  async getAccounts(): Promise<IAccount[]> {
+    const query = { where: {}, raw: true };
+    return this.accountDataSource.fetchAll(query);
   }
 
   async createAccount(data: Partial<IAccountCreationBody>) {

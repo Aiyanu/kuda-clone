@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import express, { Request, Response, Express, NextFunction } from "express";
 import dotenv from "dotenv";
 dotenv.config();
@@ -6,6 +7,8 @@ import DBInitialize from "./src/database/init";
 import UserRoute from "./src/routers/user.router";
 import AccountRoute from "./src/routers/account.router";
 import TransactionRoute from "./src/routers/transaction.router";
+import adminRouter from "./src/routers/admin.router";
+import AdminRoute from "./src/routers/admin.router";
 
 //create an app
 const app = express();
@@ -32,6 +35,7 @@ app.use((err: TypeError, req: Request, res: Response, next: NextFunction) => {
 app.use("/api/user", UserRoute);
 app.use("/api/account", AccountRoute);
 app.use("/api/transaction", TransactionRoute);
+app.use("/api/admin", AdminRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send(`Welcome to ${process.env.APPNAME}`);

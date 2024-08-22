@@ -1,25 +1,11 @@
 import express, { Request, Response } from "express";
 import TransactionController from "../controller/transaction.controller";
 import { Auth, validator } from "../middleware/index.middleware";
-import TransactionService from "../services/transaction.service";
-import TransactionDataSource from "../datasources/transaction.datasource";
-import TokenService from "../services/token.services";
-import TokenDataSource from "../datasources/token.datasource";
 import ValidationSchema from "../validators/transaction.validator.schema";
-import AccountService from "../services/account.service";
-import AccountDataSource from "../datasources/account.datasource";
-import PayeeService from "../services/payee.service";
-import PayeeDataSource from "../datasources/payee.datasource";
+import { container } from "tsyringe";
 
 const router = express.Router();
-const transactionService = new TransactionService(new TransactionDataSource());
-const accountService = new AccountService(new AccountDataSource());
-const payeeService = new PayeeService(new PayeeDataSource());
-const transactionController = new TransactionController(
-  transactionService,
-  accountService,
-  payeeService
-);
+const transactionController = container.resolve(TransactionController);
 const createTransactionRoute = () => {
   router.post(
     "/initiate-paystack-deposit",
@@ -54,6 +40,14 @@ const createTransactionRoute = () => {
       return transactionController.withdrawByPaystack(req, res);
     }
   );
+
+  router.get("/list", Auth(), (req: Request, res: Response) => {
+    return transactionController.getAllUserTransaction(req, res);
+  });
+
+  router.get("/:id", Auth(), (req: Request, res: Response) => {
+    return transactionController.getUserTransaction(req, res);
+  });
   return router;
 };
 

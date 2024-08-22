@@ -1,15 +1,11 @@
 import express, { Request, Response } from "express";
 import AccountController from "../controller/account.controller";
 import { Auth, validator } from "../middleware/index.middleware";
-import AccountService from "../services/account.service";
-import AccountDataSource from "../datasources/account.datasource";
-import TokenService from "../services/token.services";
-import TokenDataSource from "../datasources/token.datasource";
 import ValidationSchema from "../validators/account.validator.schema";
+import { container } from "tsyringe";
 
 const router = express.Router();
-const accountService = new AccountService(new AccountDataSource());
-const accountController = new AccountController(accountService);
+const accountController = container.resolve(AccountController);
 const createAccountRoute = () => {
   router.post(
     "/create-account",
@@ -24,6 +20,12 @@ const createAccountRoute = () => {
   });
   router.get("/:id", Auth(), (req: Request, res: Response) => {
     return accountController.getUserAccount(req, res);
+  });
+  router.get("/payee/list", Auth(), (req: Request, res: Response) => {
+    return accountController.getAllUserPayee(req, res);
+  });
+  router.get("/payee/:id", Auth(), (req: Request, res: Response) => {
+    return accountController.getUserPayee(req, res);
   });
   return router;
 };

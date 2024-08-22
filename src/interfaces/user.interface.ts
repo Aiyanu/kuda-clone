@@ -19,7 +19,8 @@ export interface IFindUserQuery {
     [key: string]: string;
   };
   raw?: boolean;
-  returning: boolean;
+  order?: any;
+  returning?: boolean;
 }
 
 export interface IUserCreationBody
@@ -29,6 +30,7 @@ export interface IUserModel extends Model<IUser, IUserCreationBody>, IUser {}
 
 export interface IUserDataSource {
   fetchOne(query: IFindUserQuery): Promise<IUser | null>;
+  fetchAll(query: IFindUserQuery): Promise<IUser[] | null>;
   create(record: IUserCreationBody): Promise<IUser>;
   updateOne(searchBy: IFindUserQuery, data: Partial<IUser>): Promise<void>;
 }

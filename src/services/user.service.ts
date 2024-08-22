@@ -1,14 +1,17 @@
+import { autoInjectable } from "tsyringe";
 import {
   IFindUserQuery,
   IUser,
   IUserCreationBody,
   IUserDataSource,
 } from "../interfaces/user.interface";
+import UserDataSource from "../datasources/user.datasource";
 
+@autoInjectable()
 class UserService {
-  private userDataSource: IUserDataSource;
+  private userDataSource: UserDataSource;
 
-  constructor(_userDataSource: IUserDataSource) {
+  constructor(_userDataSource: UserDataSource) {
     this.userDataSource = _userDataSource;
   }
 
@@ -16,6 +19,16 @@ class UserService {
     const query = { where: { ...record }, raw: true } as IFindUserQuery;
     return this.userDataSource.fetchOne(query);
   }
+
+  async getAllUsers(): Promise<IUser[] | null> {
+    const query = {
+      where: {},
+      order: [["createdAt", "DESC"]],
+      raw: true,
+    } as IFindUserQuery;
+    return this.userDataSource.fetchAll(query);
+  }
+
   async createUser(record: IUserCreationBody) {
     return this.userDataSource.create(record);
   }

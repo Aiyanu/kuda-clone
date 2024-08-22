@@ -3,12 +3,14 @@ import {
   IFindTokenQuery,
   IToken,
   ITokenCreationBody,
-  ITokenDataSource,
 } from "../interfaces/token.interface";
 import Utility from "../utils/index.utils";
+import { autoInjectable } from "tsyringe";
+import TokenDataSource from "../datasources/token.datasource";
 
+@autoInjectable()
 class TokenService {
-  private tokenDataSource: ITokenDataSource;
+  private tokenDataSource: TokenDataSource;
   private readonly tokenExpires: number = 5;
   public TokenType = {
     FORGOT_PASSWORD: "FORGOT_PASSWORD",
@@ -18,7 +20,7 @@ class TokenService {
     USED: "USED",
   };
 
-  constructor(_tokenDataSource: ITokenDataSource) {
+  constructor(_tokenDataSource: TokenDataSource) {
     this.tokenDataSource = _tokenDataSource;
   }
 

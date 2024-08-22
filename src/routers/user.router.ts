@@ -1,16 +1,11 @@
 import express, { Request, Response } from "express";
 import UserController from "../controller/user.controller";
-import { validator } from "../middleware/index.middleware";
+import { Auth, validator } from "../middleware/index.middleware";
 import ValidationSchema from "../validators/user.validator.schema";
-import UserService from "../services/user.service";
-import UserDataSource from "../datasources/user.datasource";
-import TokenService from "../services/token.services";
-import TokenDataSource from "../datasources/token.datasource";
+import { container } from "tsyringe";
 
 const router = express.Router();
-export const userService = new UserService(new UserDataSource());
-const tokenService = new TokenService(new TokenDataSource());
-const userController = new UserController(userService, tokenService);
+const userController = container.resolve(UserController);
 const createUserRoute = () => {
   router.post(
     "/register",
@@ -23,6 +18,7 @@ const createUserRoute = () => {
   router.post(
     "/login",
     validator(ValidationSchema.loginSchema),
+    Auth(),
     (req: Request, res: Response) => {
       return userController.login(req, res);
     }
@@ -43,6 +39,9 @@ const createUserRoute = () => {
       return userController.resetPassword(req, res);
     }
   );
+  router.get("/profile", Auth(), (req: Request, res: Response) => {
+    return userController.getProfile(req, res);
+  });
 
   return router;
 };
