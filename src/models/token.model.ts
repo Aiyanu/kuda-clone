@@ -34,6 +34,10 @@ const TokenModel = Db.define<ITokenModel>(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    verified: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

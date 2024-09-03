@@ -1,4 +1,4 @@
-import { Model, Optional, Transaction } from "sequelize";
+import { Optional, Model, Transaction } from "sequelize";
 
 export interface IPaystackPaymentObject {
   authorization_url: string;

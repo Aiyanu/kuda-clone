@@ -18,7 +18,6 @@ const createUserRoute = () => {
   router.post(
     "/login",
     validator(ValidationSchema.loginSchema),
-    Auth(),
     (req: Request, res: Response) => {
       return userController.login(req, res);
     }
@@ -29,6 +28,14 @@ const createUserRoute = () => {
     validator(ValidationSchema.forgotPasswordSchema),
     (req: Request, res: Response) => {
       return userController.forgotPassword(req, res);
+    }
+  );
+
+  router.post(
+    "/verify-otp",
+    validator(ValidationSchema.verifyOtpSchema),
+    (req: Request, res: Response) => {
+      return userController.verifyToken(req, res);
     }
   );
 

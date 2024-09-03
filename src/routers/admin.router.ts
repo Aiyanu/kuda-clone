@@ -5,6 +5,7 @@ import { container } from "tsyringe";
 import TransactionController from "../controller/transaction.controller";
 import { AdminAuth, validator } from "../middleware/index.middleware";
 import ValidationSchema from "../validators/user.validator.schema";
+import AccountValidationSchema from "../validators/account.validator.schema";
 const router = express.Router();
 const userController = container.resolve(UserController);
 const accountController = container.resolve(AccountController);
@@ -26,10 +27,10 @@ const createAdminRoute = () => {
     }
   );
   router.get("/accounts", AdminAuth(), (req: Request, res: Response) => {
-    return accountController.getAllAccountsByAdmin(req, res);
+    return accountController.getAllUserAccountsAdmin(req, res);
   });
   router.get("/accounts/:id", AdminAuth(), (req: Request, res: Response) => {
-    return accountController.getSingleAccountId(req, res);
+    return accountController.getUserAccountAdmin(req, res);
   });
   router.get("/transactions", AdminAuth(), (req: Request, res: Response) => {
     return transactionController.getAllTransactionsByAdmin(req, res);
@@ -39,6 +40,18 @@ const createAdminRoute = () => {
     AdminAuth(),
     (req: Request, res: Response) => {
       return transactionController.getSingleTransactionId(req, res);
+    }
+  );
+  router.get("/loans", AdminAuth(), (req: Request, res: Response) => {
+    return accountController.getLoansAdmin(req, res);
+  });
+
+  router.post(
+    "/loans/approve-decline-loan",
+    validator(AccountValidationSchema.approveOrDeclineLoanSchema),
+    AdminAuth(),
+    (req: Request, res: Response) => {
+      return accountController.approveOrDeclineLoanByAdmin(req, res);
     }
   );
   return router;

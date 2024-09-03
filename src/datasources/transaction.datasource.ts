@@ -22,6 +22,10 @@ class TransactionDataSource implements ITransactionDataSource {
     return await TransactionModel.findOne(query);
   }
 
+  async fetchAll(query: FindOptions<ITransaction>): Promise<ITransaction[]> {
+    return await TransactionModel.findAll(query);
+  }
+
   async updateOne(
     data: Partial<ITransaction>,
     query: IFindTransactionQuery
@@ -29,8 +33,11 @@ class TransactionDataSource implements ITransactionDataSource {
     await TransactionModel.update(data, query);
   }
 
-  async fetchAll(query: FindOptions<ITransaction>): Promise<ITransaction[]> {
-    return await TransactionModel.findAll(query);
+  async fetchSum(
+    field: keyof ITransaction,
+    query: IFindTransactionQuery
+  ): Promise<number> {
+    return await TransactionModel.sum(field, query);
   }
 }
 

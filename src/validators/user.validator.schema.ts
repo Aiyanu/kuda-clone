@@ -15,9 +15,10 @@ const forgotPasswordSchema = yup.object({
   email: yup.string().email().lowercase().trim().required(),
 });
 
-const resetPasswordSchema = yup.object({
+const verifyOtpSchema = yup.object({
   code: yup.string().trim().required(),
-  email: yup.string().email().lowercase().trim().required(),
+});
+const resetPasswordSchema = yup.object({
   password: yup.string().min(6).trim().required(),
 });
 
@@ -32,6 +33,7 @@ const ValidationSchema = {
   forgotPasswordSchema,
   resetPasswordSchema,
   setAccountStatusSchema,
+  verifyOtpSchema,
 };
 
 export default ValidationSchema;

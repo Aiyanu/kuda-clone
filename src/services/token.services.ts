@@ -16,8 +16,12 @@ class TokenService {
     FORGOT_PASSWORD: "FORGOT_PASSWORD",
   };
   public TokenStatus = {
-    NOTUSED: "NOTUSED",
+    NOT_USED: "NOT_USED",
     USED: "USED",
+  };
+  public IsTokenVerified = {
+    VERIFIED: "VERIFIED",
+    NOT_VERIFIED: "NOT_VERIFIED",
   };
 
   constructor(_tokenDataSource: TokenDataSource) {
@@ -34,7 +38,8 @@ class TokenService {
       key: email,
       type: this.TokenType.FORGOT_PASSWORD,
       expires: moment().add(this.tokenExpires, "minute").toDate(),
-      status: this.TokenStatus.NOTUSED,
+      status: this.TokenStatus.NOT_USED,
+      verified: this.IsTokenVerified.NOT_VERIFIED,
     } as ITokenCreationBody;
     let token = await this.createToken(tokenData);
     return token;

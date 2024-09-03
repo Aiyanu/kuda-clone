@@ -58,7 +58,6 @@ class UserController {
       return Utility.handleSuccess(
         res,
         "User registered successfully",
-        { user },
         ResponseCode.SUCCESS
       );
     } catch (error) {
@@ -152,14 +151,60 @@ class UserController {
     }
   }
 
+  async verifyToken(req: Request, res: Response) {
+    try {
+      const body = { ...req.body };
+      let isValidToken = await this.tokenService.getTokenByField({
+        key: body.email,
+        code: body.code,
+        type: this.tokenService.TokenType.FORGOT_PASSWORD,
+        status: this.tokenService.TokenStatus.NOT_USED,
+      });
+      if (!isValidToken) {
+        return Utility.handleError(
+          res,
+          "Token doesn't exist",
+          ResponseCode.NOT_FOUND
+        );
+      }
+      if (
+        isValidToken &&
+        moment(isValidToken.expires).diff(moment(), "minute") <= 0
+      ) {
+        return Utility.handleError(
+          res,
+          "Token has expired",
+          ResponseCode.NOT_FOUND
+        );
+      }
+      await this.tokenService.updateRecord(
+        { id: isValidToken.id },
+        { verified: this.tokenService.IsTokenVerified.VERIFIED }
+      );
+      return Utility.handleSuccess(
+        res,
+        "token verified",
+        {},
+        ResponseCode.SUCCESS
+      );
+    } catch (err) {
+      return Utility.handleError(
+        res,
+        (err as TypeError).message,
+        ResponseCode.BAD_REQUEST
+      );
+    }
+  }
+
   async resetPassword(req: Request, res: Response) {
     try {
-      const params = { ...req.body };
+      const body = { ...req.body };
       let isValidToken = await this.tokenService.getTokenByField({
-        key: params.email,
-        code: params.code,
+        key: body.email,
+        code: body.code,
         type: this.tokenService.TokenType.FORGOT_PASSWORD,
-        status: this.tokenService.TokenStatus.NOTUSED,
+        status: this.tokenService.TokenStatus.NOT_USED,
+        verified: this.tokenService.IsTokenVerified.VERIFIED,
       });
       if (!isValidToken) {
         return Utility.handleError(
@@ -178,8 +223,7 @@ class UserController {
           ResponseCode.NOT_FOUND
         );
       }
-
-      let user = await this.userService.getUserByField({ email: params.email });
+      let user = await this.userService.getUserByField({ email: body.email });
       if (!user) {
         return Utility.handleError(
           res,
@@ -188,7 +232,7 @@ class UserController {
         );
       }
 
-      const _password = bcrypt.hashSync(params.password, 10);
+      const _password = bcrypt.hashSync(body.password, 10);
 
       await this.userService.updateRecord(
         { id: user.id },
@@ -198,7 +242,6 @@ class UserController {
         { id: isValidToken.id },
         { status: this.tokenService.TokenStatus.USED }
       );
-
       return Utility.handleSuccess(
         res,
         "Password reset Successful",
@@ -284,8 +327,6 @@ class UserController {
   }
   async setAccountStatus(req: Request, res: Response) {
     try {
-      console.log(req.body);
-
       const params = { ...req.body };
       const admin = { ...req.body.user };
       const permission = Permissions.can(admin.role).updateAny("users");

@@ -9,6 +9,7 @@ export interface IToken {
   status: string;
   createdAt: Date;
   updatedAt: Date;
+  verified: string;
 }
 
 export interface ITokenCreationBody
