@@ -2,10 +2,16 @@ import express, { Request, Response, Express, NextFunction } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
+
 import DBInitialize from "./src/database/init";
 import UserRoute from "./src/routers/user.router";
 import AccountRoute from "./src/routers/account.router";
 import TransactionRoute from "./src/routers/transaction.router";
+// Import swagger schemas for documentation
+import "./src/interfaces/swagger.schemas";
+
+import swaggerUi from "swagger-ui-express";
+import swaggerJSDoc from "swagger-jsdoc";
 
 //create an app
 const app = express();
@@ -18,6 +24,33 @@ app.use(
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// Swagger configuration
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Kuda Clone API",
+      version: "1.0.0",
+      description: "API documentation for Kuda Clone project",
+    },
+    servers: [
+      {
+        url: "http://localhost:" + (process.env.PORT || 5000),
+      },
+    ],
+  },
+  apis: [
+    "./src/routers/*.ts",
+    "./src/controllers/*.ts",
+    "./src/services/*.ts",
+    "./src/models/*.ts",
+    "./src/interfaces/*.ts",
+  ],
+};
+
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((err: TypeError, req: Request, res: Response, next: NextFunction) => {
   try {

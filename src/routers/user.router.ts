@@ -12,6 +12,24 @@ export const userService = new UserService(new UserDataSource());
 const tokenService = new TokenService(new TokenDataSource());
 const userController = new UserController(userService, tokenService);
 const createUserRoute = () => {
+  /**
+   * @swagger
+   * /api/user/register:
+   *   post:
+   *     summary: Register a new user
+   *     tags: [User]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/RegisterUser'
+   *     responses:
+   *       201:
+   *         description: User registered successfully
+   *       400:
+   *         description: Bad request
+   */
   router.post(
     "/register",
     validator(ValidationSchema.registerSchema),
@@ -20,6 +38,24 @@ const createUserRoute = () => {
     }
   );
 
+  /**
+   * @swagger
+   * /api/user/login:
+   *   post:
+   *     summary: Login a user
+   *     tags: [User]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/LoginUser'
+   *     responses:
+   *       200:
+   *         description: User logged in successfully
+   *       401:
+   *         description: Unauthorized
+   */
   router.post(
     "/login",
     validator(ValidationSchema.loginSchema),
@@ -28,6 +64,24 @@ const createUserRoute = () => {
     }
   );
 
+  /**
+   * @swagger
+   * /api/user/forgot-password:
+   *   post:
+   *     summary: Request password reset
+   *     tags: [User]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/ForgotPassword'
+   *     responses:
+   *       200:
+   *         description: Password reset email sent
+   *       400:
+   *         description: Bad request
+   */
   router.post(
     "/forgot-password",
     validator(ValidationSchema.forgotPasswordSchema),
@@ -36,6 +90,24 @@ const createUserRoute = () => {
     }
   );
 
+  /**
+   * @swagger
+   * /api/user/reset-password:
+   *   post:
+   *     summary: Reset user password
+   *     tags: [User]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/ResetPassword'
+   *     responses:
+   *       200:
+   *         description: Password reset successfully
+   *       400:
+   *         description: Bad request
+   */
   router.post(
     "/reset-password",
     validator(ValidationSchema.resetPasswordSchema),
