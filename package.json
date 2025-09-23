@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn index.ts",
-    "build": "pnpm install && tsc",
-    "start": "node dist/index.js"
+    "build": "pnpm install && tsc && node scripts/copy-templates.js",
+    "start": "node dist/index.js",
+    "postbuild": "node scripts/copy-templates.js"
   },
   "author": "",
   "license": "ISC",
